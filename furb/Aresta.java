@@ -35,4 +35,5 @@ public class Aresta {
     public void setPeso(Integer peso) {
         this.peso = peso;
     }
+
 }

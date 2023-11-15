@@ -1,25 +1,12 @@
 package furb;
 
-import javax.swing.event.ListDataEvent;
+import javax.swing.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class CarteiroChines {
 
-    private List<Aresta> arestas = new ArrayList<>();
-
+    private Map<String, List<Aresta>> grafo = new HashMap<>();
     private List<String> verticesImpares = new ArrayList<>();
-
-    private List<String> verticesVisitados = new ArrayList<>();
-
-
-    public List<String> getVerticesVisitados() {
-        return verticesVisitados;
-    }
-
-    public void setVerticesVisitados(List<String> verticesVisitados) {
-        this.verticesVisitados = verticesVisitados;
-    }
 
     public List<String> getVerticesImpares() {
         return verticesImpares;
@@ -29,52 +16,70 @@ public class CarteiroChines {
         this.verticesImpares.add(verticeImpar);
     }
 
-    public List<Aresta> getArestas() {
-        return arestas;
+    public Map<String, List<Aresta>> getGrafo() {
+        return grafo;
     }
 
     public void addAresta(Aresta aresta) {
-        this.arestas.add(aresta);
+        grafo.computeIfAbsent(aresta.getOrigem(), k -> new ArrayList<>()).add(aresta);
     }
 
-    public String encontraValorMinimo(List<Aresta> menorCaminho) {
-        List<Aresta> retornaVerticesNaoVisitados= menorCaminho.stream().filter(item-> (verticesVisitados.size() > 0
-                && !verticesVisitados.contains(item.getDestino()))).collect(Collectors.toList());
-        return !retornaVerticesNaoVisitados.isEmpty() ?  retornaVerticesNaoVisitados.stream().min(Comparator.comparingInt(Aresta::getPeso)).get().getDestino() :
-                menorCaminho.stream().min(Comparator.comparingInt(Aresta::getPeso)).get().getDestino();
-    }
-
-    public List<Aresta> relax(String vertice) {
-        Integer pivo = 0;
-        Integer valorInicial = 0;
-        List<Aresta> menorCaminho = new ArrayList<>();
-
-        List<Aresta> filtroOrigem = getArestas().stream().filter(item -> item.getOrigem().equals(vertice)).collect(Collectors.toList());
-        for (Aresta aresta : filtroOrigem) {
-            valorInicial = pivo + aresta.getPeso();
-            menorCaminho.add(new Aresta(aresta.getOrigem(), aresta.getDestino(), valorInicial));
+    private String encontraMenorValor(Map<String, Integer> distanciasMinimas, List<String> verticesVisitados) {
+        int menorValor = Integer.MAX_VALUE;
+        String vertice = null;
+        // Percorrer os valores do mapa
+        for (Map.Entry<String, Integer> valor : distanciasMinimas.entrySet()) {
+            if (valor.getValue() < menorValor && !verticesVisitados.contains(valor.getKey())) {
+                vertice = valor.getKey();
+                menorValor = valor.getValue();
+            }
         }
-        verticesVisitados.add(vertice);
-        return menorCaminho;
+        return vertice;
     }
 
     public void dijkstra() {
-        Integer pivo = 0;
-        String u;
-        Integer valorInicial = 0;
-        List<Aresta> menorCaminho = new ArrayList<>();
-        int aux = arestas.size();
+        Map<String, Integer> distancia = new HashMap<>();
+        PriorityQueue<String> filaPrioridade = new PriorityQueue<>(Comparator.comparingInt(distancia::get));
+        Map<String, Integer> distanciaMinima = new HashMap<>();
+        List<String> verticesVisitados = new ArrayList<>();
+        String[][] matriz = new String[4][4];
+
+        for (String vertice : grafo.keySet()) {
+            distancia.put(vertice, Integer.MAX_VALUE);
+            distanciaMinima.put(vertice, Integer.MAX_VALUE);
+        }
 
         for (String verticeGrauImpar : verticesImpares) {
-            u = encontraValorMinimo(relax(verticeGrauImpar));
-            do {
-                if (!verticesVisitados.contains(u)) {
-                   u= encontraValorMinimo(relax(u));
-                }
-                aux = aux - 1;
-            } while (aux != 0);
+            distancia.put(verticeGrauImpar, 0);
+            filaPrioridade.add(verticeGrauImpar);
         }
+        String u = filaPrioridade.poll();
+        String verticeAtual="";
+        while (!filaPrioridade.isEmpty()) {
+            verticeAtual=u;
+            while (verticesVisitados.size() < 9) {
+                for (Aresta aresta : grafo.getOrDefault(u, Collections.emptyList())) {
+                    if (!verticesVisitados.contains(aresta.getDestino())) {
+                        int novaDistancia = distancia.get(u) + aresta.getPeso();
+
+                        if (novaDistancia < distanciaMinima.get(aresta.getDestino())) {
+                            distancia.put(aresta.getDestino(), novaDistancia);
+                            distanciaMinima.put(aresta.getDestino(), novaDistancia);
+                            // filaPrioridade.add(aresta.getDestino());
+                        }
+                    }
+                }
+                verticesVisitados.add(u);
+                u = encontraMenorValor(distanciaMinima, verticesVisitados);
+            }
+            System.out.println("Dijkstra Vértice ímpar :" + verticeAtual.toUpperCase());
+            for (Map.Entry<String, Integer> entry : distanciaMinima.entrySet()) {
+                System.out.println("Chave: " + entry.getKey() + ", Valor: " + entry.getValue());
+            }
+            verticesVisitados.clear();
+            distancia.clear();
+            u = filaPrioridade.poll();
+        }
+
     }
-
-
 }
