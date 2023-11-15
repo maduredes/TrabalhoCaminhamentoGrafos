@@ -1,78 +1,69 @@
+import furb.Aresta;
+import furb.CarteiroChines;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class Main {
 
-    private static HashMap<String, Integer> arestasImpares = new HashMap<>();
-
     public static void main(String[] args) {
-        HashMap<String, Integer> arestaValorada = new HashMap<>();
-        HashMap<String, Integer> agrupandoVertices = new HashMap<>();
+        CarteiroChines carteiroChines = new CarteiroChines();
 
-        /*
-        *
-         A      B
-         |      |
-         |      |
-         |      |
-         C      D
-         |  \   |
-         |   \  |
-         |    \ |
-         E ---  F
-         |  /   |
-         | /    |
-         |/     |
-         G --- H
-        *
-        * */
+        carteiroChines.addAresta(new Aresta("a", "b", 12));
+        carteiroChines.addAresta(new Aresta("a", "d", 2));
+        carteiroChines.addAresta(new Aresta("a", "h", 8));
 
-        arestaValorada.put("a-c", 4);
+        carteiroChines.addAresta(new Aresta("b", "a", 12));
+        carteiroChines.addAresta(new Aresta("b", "c", 3));
+        carteiroChines.addAresta(new Aresta("b", "i", 10));
 
-        arestaValorada.put("c-a", 5);
-        arestaValorada.put("c-d", 9);
-        arestaValorada.put("c-e", 4);
+        carteiroChines.addAresta(new Aresta("c", "b", 3));
+        carteiroChines.addAresta(new Aresta("c", "d", 2));
+        carteiroChines.addAresta(new Aresta("c", "e", 2));
+        carteiroChines.addAresta(new Aresta("c", "f", 1));
 
-        arestaValorada.put("e-c", 6);
-        arestaValorada.put("e-f", 8);
-        arestaValorada.put("e-g", 7);
+        carteiroChines.addAresta(new Aresta("d", "a", 2));
+        carteiroChines.addAresta(new Aresta("d", "c", 2));
+        carteiroChines.addAresta(new Aresta("d", "e", 2));
+        carteiroChines.addAresta(new Aresta("d", "g", 1));
 
-        arestaValorada.put("g-e", 3);
-        arestaValorada.put("g-h", 2);
-        arestaValorada.put("g-f", 10);
+        carteiroChines.addAresta(new Aresta("e", "c", 2));
+        carteiroChines.addAresta(new Aresta("e", "d", 1));
+        carteiroChines.addAresta(new Aresta("e", "f", 3));
+        carteiroChines.addAresta(new Aresta("e", "g", 2));
 
-        arestaValorada.put("h-g", 12);
-        arestaValorada.put("h-f", 6);
+        carteiroChines.addAresta(new Aresta("f", "c", 1));
+        carteiroChines.addAresta(new Aresta("f", "e", 3));
+        carteiroChines.addAresta(new Aresta("f", "i", 4));
+        carteiroChines.addAresta(new Aresta("f", "g", 2));
 
-        arestaValorada.put("f-h", 12);
-        arestaValorada.put("f-e", 4);
-        arestaValorada.put("f-d", 6);
-        arestaValorada.put("f-c", 1);
+        carteiroChines.addAresta(new Aresta("g", "d", 1));
+        carteiroChines.addAresta(new Aresta("g", "e", 2));
+        carteiroChines.addAresta(new Aresta("g", "f", 2));
+        carteiroChines.addAresta(new Aresta("g", "h", 5));
 
 
+        carteiroChines.addAresta(new Aresta("h", "a", 8));
+        carteiroChines.addAresta(new Aresta("h", "g", 5));
+        carteiroChines.addAresta(new Aresta("h", "i", 12));
 
-        for (Map.Entry<String, Integer> entry : arestaValorada.entrySet()) {
-            String[] chave = entry.getKey().split("-");
-            if (!agrupandoVertices.isEmpty()) {
-                agrupandoVertices.put(chave[0], agrupandoVertices.get(chave[0]) != null ? agrupandoVertices.get(chave[0]) + 1 : 1);
-            } else {
-                agrupandoVertices.put(chave[0], 1);
+        carteiroChines.addAresta(new Aresta("i", "h", 12));
+        carteiroChines.addAresta(new Aresta("i", "f", 4));
+        carteiroChines.addAresta(new Aresta("i", "b", 10));
+
+        for (Aresta aresta : carteiroChines.getArestas()) {
+            List<Aresta> filtroOrigem = carteiroChines.getArestas().stream().filter(item -> item.getOrigem().equals(aresta.getOrigem())).collect(Collectors.toList());
+            if (!carteiroChines.getVerticesImpares().contains(aresta.getOrigem())) {
+                if (filtroOrigem.size() % 2 != 0) {
+                    carteiroChines.addVerticesImpares(filtroOrigem.getFirst().getOrigem());
+                }
             }
         }
-        //IDENTIFICANDO VERTICES IMPARES
-        for (Map.Entry<String, Integer> entry : agrupandoVertices.entrySet()) {
-            String chave = entry.getKey();
-            Integer valor = entry.getValue();
-            if (valor % 2 != 0) {
-                addVerticesImpares(chave, valor);
-            }
-        }
+        carteiroChines.dijkstra();
 
-    }
-
-    public static void addVerticesImpares(String chave, Integer valor) {
-        arestasImpares.put(chave, valor);
     }
 
 }
