@@ -1,11 +1,10 @@
-import furb.Aresta;
-import furb.CarteiroChines;
+// Alunas: Karoline Custodio dos Santos e Maria Eduarda Redes
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
+
+import model.Aresta;
+import model.CarteiroChines;
 
 public class Main {
 
@@ -27,7 +26,7 @@ public class Main {
 
         carteiroChines.addAresta(new Aresta("d", "a", 2));
         carteiroChines.addAresta(new Aresta("d", "c", 2));
-        carteiroChines.addAresta(new Aresta("d", "e", 2));
+        carteiroChines.addAresta(new Aresta("d", "e", 1));
         carteiroChines.addAresta(new Aresta("d", "g", 1));
 
         carteiroChines.addAresta(new Aresta("e", "c", 2));
@@ -45,7 +44,6 @@ public class Main {
         carteiroChines.addAresta(new Aresta("g", "f", 2));
         carteiroChines.addAresta(new Aresta("g", "h", 5));
 
-
         carteiroChines.addAresta(new Aresta("h", "a", 8));
         carteiroChines.addAresta(new Aresta("h", "g", 5));
         carteiroChines.addAresta(new Aresta("h", "i", 12));
@@ -54,16 +52,16 @@ public class Main {
         carteiroChines.addAresta(new Aresta("i", "f", 4));
         carteiroChines.addAresta(new Aresta("i", "b", 10));
 
-        for (Aresta aresta : carteiroChines.getArestas()) {
-            List<Aresta> filtroOrigem = carteiroChines.getArestas().stream().filter(item -> item.getOrigem().equals(aresta.getOrigem())).collect(Collectors.toList());
-            if (!carteiroChines.getVerticesImpares().contains(aresta.getOrigem())) {
-                if (filtroOrigem.size() % 2 != 0) {
-                    carteiroChines.addVerticesImpares(filtroOrigem.getFirst().getOrigem());
+        for (String  aresta1 : carteiroChines.getGrafo().keySet()) {
+            for(Aresta aresta : carteiroChines.getGrafo().get(aresta1)) {
+                List<Aresta> filtroOrigem =  carteiroChines.getGrafo().get(aresta1).stream().filter(item -> item.getOrigem().equals(aresta.getOrigem())).collect(Collectors.toList());
+                if (!carteiroChines.getVerticesImpares().contains(aresta.getOrigem())) {
+                    if (filtroOrigem.size() % 2 != 0) {
+                        carteiroChines.addVerticesImpares(filtroOrigem.get(0).getOrigem());
+                    }
                 }
             }
         }
-        carteiroChines.dijkstra();
-
+       carteiroChines.dijkstra();
     }
-
 }

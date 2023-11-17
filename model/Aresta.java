@@ -1,4 +1,6 @@
-package furb;
+// Alunas: Karoline Custodio dos Santos e Maria Eduarda Redes
+
+package model;
 
 public class Aresta {
 
