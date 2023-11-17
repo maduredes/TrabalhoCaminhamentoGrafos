@@ -120,6 +120,7 @@ public class CarteiroChines {
         int linhaMenorValor = -1;
         int colunaMenorValor = -1;
         
+        System.out.println();
         System.out.println("Ciclo Euleriano:");
         for (i = 0; i < matriz.length; i++) {
             for (j = 0; j < matriz[i].length; j++) {

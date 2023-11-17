@@ -44,6 +44,7 @@ public class Main {
         carteiroChines.addAresta(new Aresta("g", "f", 2));
         carteiroChines.addAresta(new Aresta("g", "h", 5));
 
+
         carteiroChines.addAresta(new Aresta("h", "a", 8));
         carteiroChines.addAresta(new Aresta("h", "g", 5));
         carteiroChines.addAresta(new Aresta("h", "i", 12));
