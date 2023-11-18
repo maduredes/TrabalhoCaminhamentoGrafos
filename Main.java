@@ -53,16 +53,10 @@ public class Main {
         carteiroChines.addAresta(new Aresta("i", "f", 4));
         carteiroChines.addAresta(new Aresta("i", "b", 10));
 
-        for (String  aresta1 : carteiroChines.getGrafo().keySet()) {
-            for(Aresta aresta : carteiroChines.getGrafo().get(aresta1)) {
-                List<Aresta> filtroOrigem =  carteiroChines.getGrafo().get(aresta1).stream().filter(item -> item.getOrigem().equals(aresta.getOrigem())).collect(Collectors.toList());
-                if (!carteiroChines.getVerticesImpares().contains(aresta.getOrigem())) {
-                    if (filtroOrigem.size() % 2 != 0) {
-                        carteiroChines.addVerticesImpares(filtroOrigem.get(0).getOrigem());
-                    }
-                }
-            }
-        }
-       carteiroChines.dijkstra();
+        carteiroChines.addVerticesImpares();
+        int [][] matriz=carteiroChines.dijkstra();
+        carteiroChines.imprimeMatrizDistancia(matriz);
+        // ciclo euleriano
+        carteiroChines.imprimeCicloEulerianoCustoTotal(matriz);
     }
 }
